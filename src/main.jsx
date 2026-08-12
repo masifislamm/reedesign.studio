@@ -23,9 +23,7 @@ function Menu({open, close}) {
 function App() {
   const [menu, setMenu] = useState(false);
   const [current, setCurrent] = useState(0);
-  const [introWord, setIntroWord] = useState('brand');
   const cursorRef = useRef(null);
-  const dynamicWords = ['brand', 'space', 'product', 'experience'];
   
   const handleHeroMove = event => {
     if (event.pointerType === 'touch') return;
@@ -37,17 +35,6 @@ function App() {
     event.currentTarget.style.setProperty('--image-x', `${x * 12}px`);
     event.currentTarget.style.setProperty('--image-y', `${y * 10}px`);
   };
-  const handleIntroMove = event => {
-    // Support both pointer and touch events
-    let clientX = event.clientX;
-    if (event.touches && event.touches[0]) clientX = event.touches[0].clientX;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const percent = (clientX - bounds.left) / bounds.width;
-    const index = Math.min(dynamicWords.length - 1, Math.max(0, Math.floor(percent * dynamicWords.length)));
-    setIntroWord(dynamicWords[index]);
-  };
-  const resetIntroWord = () => setIntroWord(dynamicWords[0]);
-
   
   const resetHero = event => {
     event.currentTarget.style.setProperty('--image-x', '0px');
@@ -90,21 +77,12 @@ function App() {
         <span className="hero-shine" aria-hidden="true"/>
       </div>
     </section>
-    <section className="intro" id="about"
-      onPointerMove={handleIntroMove}
-      onPointerLeave={resetIntroWord}
-      onTouchMove={handleIntroMove}
-      onTouchEnd={resetIntroWord}
-      
-    >
-      <div className="intro-box">
-        <div className="intro-box-inner">
-          <p className="eyebrow">WHO WE ARE</p>
-          <h2>We are a multidisciplinary design consultancy that brings <span className="intro-dynamic">{introWord}</span> together.</h2>
-          <p className="intro-copy">We shape ideas into compelling brand, space, product and experience with clarity, craft and cultural insight.</p>
-          <a className="text-link" href="#contact">More about the studio <span>↗</span></a>
-        </div>
-      </div>
+    <section className="intro" id="about" aria-label="Who we are">
+      <div className="intro-word intro-love">Love</div>
+      <div className="intro-word-group intro-spaces"><div>Spaces</div><div>Through</div></div>
+      <div className="intro-word-group intro-design"><div>Design</div><div>Exceptional</div></div>
+      <div className="intro-word-group intro-critical"><div>Critical</div><div>Collaboration</div></div>
+      <a className="text-link" href="#contact">Read more</a>
     </section>
     <section className="work" id="projects"><div className="section-heading"><p className="eyebrow">SELECTED WORK</p><p>2021—2026</p></div><div className="project-grid">{projects.map((p, i) => <article className={`project ${p.span}`} key={p.name} onMouseEnter={() => setCurrent(i)}><div className="project-image"><img src={p.image} alt={p.name} /></div><div className="project-meta"><h3>{p.name}</h3><p>{p.location} <span>0{i + 1}</span></p></div></article>)}</div><p className="project-count">{String(current + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}</p></section>
     <section className="statement"><p className="eyebrow">OUR APPROACH</p><h2>Thoughtful design<br/>is a form of <em>care.</em></h2><p className="statement-copy">Our work starts with listening. We look carefully at the character of a place, the people around it and the possibilities hidden in plain sight. Then, together, we make something lasting.</p></section>

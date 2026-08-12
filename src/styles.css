@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap');
 
 :root{
   --ink:#20332b;
@@ -7,9 +7,14 @@
   --line:rgba(32,51,43,.34);
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;cursor:none}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:'DM Sans',Arial,sans-serif}
+html{scroll-behavior:auto;cursor:none;scroll-snap-type:y mandatory}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'DM Sans',Arial,sans-serif;overscroll-behavior-y:contain}
 a{color:inherit;text-decoration:none}
+
+section,
+main{scroll-snap-align:start;scroll-snap-stop:always}
+
+section{min-height:100vh}
 
 /* Nav */
 .nav{align-items:flex-start;display:flex;justify-content:space-between;left:0;padding:23px 28px;position:absolute;top:0;width:100%;z-index:40}
@@ -37,40 +42,60 @@ a{color:inherit;text-decoration:none}
 .hero-image:hover{box-shadow:0 25px 60px rgba(32,51,43,.16)}
 .hero-image:hover video{transform:scale(1.04)}
 
-/* Intro / Who We Are - full page style */
-.intro{min-height:100svh;border-top:1px solid var(--line);display:grid;place-items:center;gap:36px;margin:0;padding:0 5.5vw;background:linear-gradient(180deg,rgba(255,255,255,.97),rgba(238,234,218,1));}
-.intro > .intro-box{max-width:860px}
-/* Square composition container: invisible box that composes the intro text */
-.intro-box{
-  width: min(68vmin, 760px);
-  max-width:860px;
-  padding-top:100%; /* reserve square space */
+/* Intro / Who We Are */
+.intro{
+  min-height:100svh;
+  margin:0;
+  padding:0;
+  background:#f9f9f8;
   position:relative;
+  overflow:hidden;
 }
-.intro-box-inner{
+.intro-line{
+  display:none;
+}
+.intro-word,
+.intro-word-group{
+  color:#ff4d32;
+  font-family:Anton, Impact, sans-serif;
+  font-size:clamp(72px, 8.75vw, 168px);
+  font-weight:400;
+  letter-spacing:-.055em;
+  line-height:.77;
   position:absolute;
-  inset:0;
-  display:grid;
-  grid-template-rows: auto 1fr auto;
-  gap: clamp(14px, 2.2vh, 28px);
-  align-items:center;
-  justify-items:start;
-  padding: clamp(18px, 3.2vw, 48px);
-  box-sizing:border-box;
+  text-transform:uppercase;
+  transform:scaleX(.72);
+  transform-origin:left top;
+  white-space:nowrap;
 }
-.intro-box .eyebrow{align-self:start}
-.intro-box h2{font-size:clamp(28px,4.8vw,46px);margin:0;line-height:1.06}
-.intro-box .intro-copy{margin:0;max-width:100%}
+.intro-love{left:11.5vw;top:14.5vh}
+.intro-spaces{left:11.5vw;top:43.5vh}
+.intro-design{left:72.5vw;top:14.5vh}
+.intro-critical{left:56.5vw;top:58vh}
+.intro-word-group > div + div{margin-top:clamp(10px, 1.2vw, 22px)}
+.intro .text-link{
+  bottom:3.5vh;
+  left:50%;
+  position:absolute;
+  transform:translateX(-50%);
+  padding:0;
+  font:12px 'DM Mono',monospace;
+  text-transform:none;
+  color:#ff4d32;
+  opacity:1;
+  border:0;
+}
 
 @media (max-width:900px){
-  .intro-box{width:min(86vw,86vmin);padding-top:100%}
-  .intro-box h2{font-size:34px}
+  .intro-word,
+  .intro-word-group{font-size:clamp(56px, 15vw, 112px);line-height:.8;transform:scaleX(.78)}
+  .intro-love{left:9vw;top:12vh}
+  .intro-spaces{left:9vw;top:32vh}
+  .intro-design{left:25vw;top:51vh}
+  .intro-critical{left:9vw;top:69vh}
+  .intro-word-group > div + div{margin-top:clamp(8px, 2vw, 16px)}
+  .intro .text-link{bottom:4vh}
 }
-.intro p.eyebrow{letter-spacing:.18em;margin:0;text-transform:uppercase;font-size:12px;color:var(--ink);opacity:.72}
-.intro h2{font-size:clamp(52px,7vw,96px);font-weight:500;line-height:1.02;letter-spacing:-.04em}
-.intro-dynamic{display:inline-flex;color:rgba(186,41,36,1);font-weight:800;font-size:inherit;letter-spacing:-.02em;text-transform:none;position:relative}
-.intro-copy{font-size:1.02rem;line-height:1.8;margin:28px 0 0;max-width:620px;color:rgba(32,51,43,.86)}
-.text-link{border-bottom:1px solid var(--ink);display:inline-block;font:12px 'DM Mono',monospace;margin-top:28px;padding-bottom:8px;text-transform:uppercase}
 
 /* GIF used for the intro dynamic word */
 /* removed gif-specific styles (reverted to text-only dynamic word) */
@@ -93,5 +118,6 @@ a{color:inherit;text-decoration:none}
 }
 
 @media (prefers-reduced-motion:reduce){
-  .hero-image,.hero-image video,.hero-shine{transition:none}
+  html{scroll-behavior:auto;scroll-snap-type:none}
+  .hero-image,.hero-image video,.hero-shine,.intro,.intro-line{transition:none;animation:none}
 }
