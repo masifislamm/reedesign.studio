@@ -4,27 +4,51 @@ import './styles.css';
 import './hero.css';
 
 const projects = [
-  { name: 'Hearth House', location: 'DHAKA, BD', image: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1800&q=85', span: 'wide' },
-  { name: 'Nawabganj Courtyard', location: 'DHAKA, BD', image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=85', span: 'tall' },
-  { name: 'Jute & Lime', location: 'CHITTAGONG, BD', image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=85', span: 'standard' },
-  { name: 'Riverside Rooms', location: 'BARISAL, BD', image: 'https://images.unsplash.com/photo-1615529162924-f8605388461d?auto=format&fit=crop&w=1200&q=85', span: 'standard' },
-  { name: 'The Green Veranda', location: 'DHAKA, BD', image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85', span: 'wide' },
-  { name: 'Nila House', location: 'SYLHET, BD', image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=85', span: 'tall' },
+  { name: 'Ortiz Le\u00f3n', industry: 'Branding', image: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=2200&q=85' },
+  { name: 'Love For Iceland', industry: 'Branding', image: 'https://images.unsplash.com/photo-1474690870753-1b92efa1f4a8?auto=format&fit=crop&w=2200&q=85' },
+  { name: 'The Good Burger', industry: 'Hospitality', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=2200&q=85' },
+  { name: 'Analytica Projects', industry: 'Corporate', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=2200&q=85' },
+  { name: 'The Cube', industry: 'Retail', image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=2200&q=85' },
+  { name: 'Casa Batll\u00f3', industry: 'Culture', image: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&w=2200&q=85' },
 ];
 
-function Menu({open, close}) {
+function Menu({ open, close }) {
   return <aside className={`menu ${open ? 'is-open' : ''}`} aria-hidden={!open}>
-    <button className="close" onClick={close}>Close <i>×</i></button>
+    <button className="close" onClick={close}>Close <i>\u00d7</i></button>
     <div className="menu-links"><a href="#projects" onClick={close}>Projects</a><a href="#about" onClick={close}>About</a><a href="#contact" onClick={close}>Contact</a></div>
-    <div className="menu-foot"><p>Architecture, interiors<br/>and spatial strategy.</p><p>Dhaka · Bangladesh</p></div>
-  </aside>
+    <div className="menu-foot"><p>Architecture, interiors<br />and spatial strategy.</p><p>Dhaka \u00b7 Bangladesh</p></div>
+  </aside>;
+}
+
+function WorksIndex({ slides }) {
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filter, setFilter] = useState('All Industries');
+  const [activeProject, setActiveProject] = useState(null);
+  const industries = ['All Industries', ...new Set(slides.map(project => project.industry))];
+  const visible = filter === 'All Industries' ? slides : slides.filter(project => project.industry === filter);
+  return <div className={`works-index ${activeProject ? 'has-active-project' : ''}`} role="region" aria-label="Selected work" onMouseLeave={() => setActiveProject(null)}>
+    <div className="works-stage" aria-hidden="true">{slides.map(project => <img className={activeProject === project.name ? 'is-active' : ''} key={project.name} src={project.image} alt="" />)}</div>
+    <div className="works-intro">
+      <h2>Projects<br />that deliver<br />on what we<br />say</h2>
+      <div className="works-copy">
+        <p>Every project here is the real application of our methodology \u2014 and of brands willing to go further. From initial research to the last aesthetic detail, every decision is made so the work performs inside and resonates outside, turning web design into memorable digital experiences.</p>
+        <p>This selection brings together projects for large and small companies, across different sectors and complexities \u2014 but with the same standard behind them. Each one, built to be unrepeatable.</p>
+      </div>
+    </div>
+    <div className="works-content">
+      <div className={`works-filter ${filterOpen ? 'is-open' : ''}`}>
+        <button type="button" aria-expanded={filterOpen} onClick={() => setFilterOpen(!filterOpen)}>{filter}<span>\u2195</span></button>
+        <div>{industries.map(industry => <button type="button" key={industry} onClick={() => { setFilter(industry); setFilterOpen(false); }}>{industry}</button>)}</div>
+      </div>
+      <ul className="works-list">{visible.map(project => <li key={project.name} onMouseEnter={() => setActiveProject(project.name)} onFocus={() => setActiveProject(project.name)}><a href="#contact">{project.name}</a></li>)}</ul>
+    </div>
+  </div>;
 }
 
 function App() {
   const [menu, setMenu] = useState(false);
-  const [current, setCurrent] = useState(0);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const cursorRef = useRef(null);
-  
   const handleHeroMove = event => {
     if (event.pointerType === 'touch') return;
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -35,58 +59,27 @@ function App() {
     event.currentTarget.style.setProperty('--image-x', `${x * 12}px`);
     event.currentTarget.style.setProperty('--image-y', `${y * 10}px`);
   };
-  
-  const resetHero = event => {
-    event.currentTarget.style.setProperty('--image-x', '0px');
-    event.currentTarget.style.setProperty('--image-y', '0px');
-  };
   useEffect(() => {
-    const onKey = e => e.key === 'Escape' && setMenu(false);
+    const onKey = event => event.key === 'Escape' && setMenu(false);
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
-
   useEffect(() => {
     const cursor = cursorRef.current;
-    if (!cursor) return;
-    const move = event => {
-      if (event.pointerType === 'touch') return;
-      cursor.style.setProperty('--cursor-x', `${event.clientX}px`);
-      cursor.style.setProperty('--cursor-y', `${event.clientY}px`);
-      cursor.classList.add('is-visible');
-    };
-    const hide = () => cursor.classList.remove('is-visible');
+    const move = event => { if (event.pointerType !== 'touch') { cursor.style.setProperty('--cursor-x', `${event.clientX}px`); cursor.style.setProperty('--cursor-y', `${event.clientY}px`); cursor.classList.add('is-visible'); } };
     window.addEventListener('pointermove', move);
-    window.addEventListener('pointerleave', hide);
-    return () => {
-      window.removeEventListener('pointermove', move);
-      window.removeEventListener('pointerleave', hide);
-    };
+    return () => window.removeEventListener('pointermove', move);
   }, []);
-
   return <main>
     <div ref={cursorRef} className="custom-cursor" aria-hidden="true" />
-    <header className="nav"><a className="brand" href="#top" aria-label="ree.design studio home">ree<span>.</span>design<br/>studio</a><button className="menu-button" onClick={() => setMenu(true)}>Menu <b>+</b></button></header>
+    <header className="nav"><a className="brand" href="#top" aria-label="ree.design studio home">ree<span>.</span>design<br />studio</a><button className="menu-button" onClick={() => setMenu(true)}>Menu <b>+</b></button></header>
     <Menu open={menu} close={() => setMenu(false)} />
-    <section className="hero" id="top" onPointerMove={handleHeroMove} onPointerLeave={resetHero}>
-      <div className="hero-image" aria-label="Video placeholder">
-        <video autoPlay muted loop playsInline preload="auto">
-          <source src="/video/hero.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <span className="hero-shine" aria-hidden="true"/>
-      </div>
-    </section>
-    <section className="intro" id="about" aria-label="Who we are">
-      <div className="intro-word intro-love">Love</div>
-      <div className="intro-word-group intro-spaces"><div>Spaces</div><div>Through</div></div>
-      <div className="intro-word-group intro-design"><div>Design</div><div>Exceptional</div></div>
-      <div className="intro-word-group intro-critical"><div>Critical</div><div>Collaboration</div></div>
-      <a className="text-link" href="#contact">Read more</a>
-    </section>
-    <section className="work" id="projects"><div className="section-heading"><p className="eyebrow">SELECTED WORK</p><p>2021—2026</p></div><div className="project-grid">{projects.map((p, i) => <article className={`project ${p.span}`} key={p.name} onMouseEnter={() => setCurrent(i)}><div className="project-image"><img src={p.image} alt={p.name} /></div><div className="project-meta"><h3>{p.name}</h3><p>{p.location} <span>0{i + 1}</span></p></div></article>)}</div><p className="project-count">{String(current + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}</p></section>
-    <section className="statement"><p className="eyebrow">OUR APPROACH</p><h2>Thoughtful design<br/>is a form of <em>care.</em></h2><p className="statement-copy">Our work starts with listening. We look carefully at the character of a place, the people around it and the possibilities hidden in plain sight. Then, together, we make something lasting.</p></section>
-    <section className="contact" id="contact"><p className="eyebrow">START A CONVERSATION</p><h2>Have a space<br/>in <em>mind?</em></h2><a href="mailto:hello@ree.design" className="email">hello@ree.design <span>↗</span></a><div className="contact-bottom"><p>Dhaka, Bangladesh<br/>Working everywhere</p><p>© 2026 ree.design studio</p><a href="#top">Back to top ↑</a></div></section>
-  </main>
+    <section className="hero" id="top" onPointerMove={handleHeroMove} onPointerLeave={event => event.currentTarget.style.setProperty('--image-x', '0px')}><div className="hero-image"><video autoPlay muted loop playsInline preload="auto"><source src="/video/hero.mp4" type="video/mp4" /></video><span className="hero-shine" aria-hidden="true" /></div></section>
+    <section className="intro" id="about" aria-label="Who we are"><div className="intro-statement intro-statement-one"><div className="intro-word-group intro-left-top"><div>We</div><div>Don't</div><div>Design</div></div><div className="intro-word-group intro-left-bottom"><div>In</div><div>Isolation</div></div></div><div className="intro-statement intro-statement-two"><div className="intro-word-group intro-middle"><div>We</div><div>Question</div><div>Connect</div><div>Experiment</div></div></div><div className="intro-statement intro-statement-three"><div className="intro-word-group intro-right"><div>And</div><div>Build</div><div>Design</div><div>That</div><div>Matters</div></div></div><button className="text-link" type="button" onClick={() => setAboutOpen(true)}>Read more <span aria-hidden="true">\u2193</span></button></section>
+    <section className={`about-panel ${aboutOpen ? 'is-open' : ''}`} aria-hidden={!aboutOpen}><button className="about-close" type="button" onClick={() => setAboutOpen(false)}>Close <span>\u00d7</span></button><div className="about-panel-content"><p className="about-kicker">Who we are</p><div className="about-copy"><p>We are a multidisciplinary design consultancy shaping ideas into spaces, products, brands, and experiences.</p><p>We connect architecture, interiors, product, graphics, and branding through one cohesive design approach.</p><p>Based in Dhaka. Working across Bangladesh.</p></div></div></section>
+    <section className="work" id="projects"><WorksIndex slides={projects} /></section>
+    <section className="statement"><p className="eyebrow">OUR APPROACH</p><h2>Thoughtful design<br />is a form of <em>care.</em></h2><p className="statement-copy">Our work starts with listening. We look carefully at the character of a place, the people around it and the possibilities hidden in plain sight. Then, together, we make something lasting.</p></section>
+    <section className="contact" id="contact"><p className="eyebrow">START A CONVERSATION</p><h2>Have a space<br />in <em>mind?</em></h2><a href="mailto:hello@ree.design" className="email">hello@ree.design <span>\u2197</span></a><div className="contact-bottom"><p>Dhaka, Bangladesh<br />Working everywhere</p><p>\u00a9 2026 ree.design studio</p><a href="#top">Back to top \u2191</a></div></section>
+  </main>;
 }
 createRoot(document.getElementById('root')).render(<App />);
