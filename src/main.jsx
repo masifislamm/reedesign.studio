@@ -65,10 +65,60 @@ function App() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
   useEffect(() => {
+    const pages = [...document.querySelectorAll('main > section:not(.about-panel)')];
+    let frame;
+    const updatePageTransforms = () => {
+      const viewportCenter = window.innerHeight / 2;
+      pages.forEach(page => {
+        const center = page.offsetTop - window.scrollY + page.offsetHeight / 2;
+        const distance = (center - viewportCenter) / window.innerHeight;
+        const amount = Math.min(Math.abs(distance), 1);
+        const rotation = distance < 0 ? amount * 90 : -amount * 90;
+        page.style.setProperty('--page-tilt', `${rotation.toFixed(2)}deg`);
+        page.style.setProperty('--page-origin', distance < 0 ? '50% 100%' : '50% 0%');
+        page.style.setProperty('--page-opacity', (1 - Math.max(0, amount - .75) * 4).toFixed(3));
+      });
+      frame = undefined;
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(updatePageTransforms);
+    };
+    updatePageTransforms();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+  useEffect(() => {
     const cursor = cursorRef.current;
-    const move = event => { if (event.pointerType !== 'touch') { cursor.style.setProperty('--cursor-x', `${event.clientX}px`); cursor.style.setProperty('--cursor-y', `${event.clientY}px`); cursor.classList.add('is-visible'); } };
+    let targetX = 0;
+    let targetY = 0;
+    let dotX = 0;
+    let dotY = 0;
+    let frame;
+    const animate = () => {
+      dotX += (targetX - dotX) * .12;
+      dotY += (targetY - dotY) * .12;
+      cursor.style.setProperty('--cursor-x', `${dotX - 2.5}px`);
+      cursor.style.setProperty('--cursor-y', `${dotY + 11}px`);
+      frame = requestAnimationFrame(animate);
+    };
+    const move = event => {
+      if (event.pointerType === 'touch') return;
+      targetX = event.clientX;
+      targetY = event.clientY;
+      if (!cursor.classList.contains('is-visible')) {
+        dotX = targetX;
+        dotY = targetY;
+        cursor.classList.add('is-visible');
+      }
+    };
     window.addEventListener('pointermove', move);
-    return () => window.removeEventListener('pointermove', move);
+    frame = requestAnimationFrame(animate);
+    return () => { window.removeEventListener('pointermove', move); cancelAnimationFrame(frame); };
   }, []);
   return <main>
     <div ref={cursorRef} className="custom-cursor" aria-hidden="true" />
