@@ -100,25 +100,42 @@ section{min-height:100vh}
 /* GIF used for the intro dynamic word */
 /* removed gif-specific styles (reverted to text-only dynamic word) */
 
-/* Selected work / split project index */
-.work{background:#fbfbfa;min-height:100svh;padding:0;position:relative}
-.works-index{display:grid;grid-template-columns:50% 50%;min-height:100svh}
-.works-stage{background:#f20d0d;min-height:100svh;overflow:hidden;position:sticky;top:0}
-.works-stage::after{background:linear-gradient(180deg,rgba(242,13,13,.08),rgba(32,51,43,.12));content:'';inset:0;pointer-events:none;position:absolute}
-.works-stage img{height:100%;inset:0;object-fit:cover;opacity:0;position:absolute;transform:scale(1.05);transition:opacity .45s ease,transform .9s cubic-bezier(.16,1,.3,1);width:100%}
-.works-stage img.is-active{opacity:1;transform:scale(1)}
-.works-content{padding:clamp(30px,5vw,84px) clamp(25px,4.5vw,76px) 9vw;position:relative}
-.works-intro{display:grid;gap:4vw;grid-template-columns:1fr 1fr;margin-bottom:clamp(58px,10vw,150px)}
-.works-intro h2{color:#f20d0d;font-family:Anton,Impact,sans-serif;font-size:clamp(60px,8vw,142px);font-weight:400;letter-spacing:-.06em;line-height:.76;margin:0;text-transform:uppercase;transform:scaleX(.72);transform-origin:top left}
-.works-intro p{font-size:clamp(13px,1.05vw,17px);line-height:1.25;margin:0;max-width:240px}
-.works-filter{margin:0 0 36px;position:relative;z-index:3}.works-filter > button{background:none;border:0;border-bottom:1px solid var(--ink);color:var(--ink);cursor:pointer;display:flex;font:13px 'DM Mono',monospace;justify-content:space-between;padding:0 0 10px;text-align:left;text-transform:uppercase;width:100%}.works-filter > button span{color:#f20d0d;font-size:18px;line-height:.6;transition:transform .3s ease}.works-filter.is-open > button span{transform:rotate(45deg)}.works-filter > div{background:#fbfbfa;display:grid;max-height:0;overflow:hidden;position:absolute;transition:max-height .35s ease;width:100%}.works-filter.is-open > div{max-height:180px}.works-filter > div button{background:none;border:0;color:var(--ink);cursor:pointer;font:13px 'DM Mono',monospace;padding:10px 0;text-align:left;text-transform:uppercase}.works-filter > div button:hover{color:#f20d0d}
-.works-list{list-style:none;margin:0;padding:0}.works-list li{align-items:center;display:flex;height:clamp(70px,7.5vw,120px);position:relative}.works-list li > button{background:none;border:0;color:var(--ink);cursor:pointer;font-size:clamp(24px,3.1vw,54px);letter-spacing:-.07em;line-height:.9;padding:0;position:relative;text-align:left;width:100%;z-index:2}.works-list li > button small{display:block;font:10px 'DM Mono',monospace;letter-spacing:0;margin-top:8px;text-transform:uppercase}.work-meta{align-items:center;background:#f20d0d;color:#fbfbfa;display:flex;gap:3vw;height:100%;inset:0;opacity:0;padding:0 4vw;pointer-events:none;position:absolute;transform:scaleY(.84);transform-origin:center;transition:opacity .25s ease,transform .4s cubic-bezier(.16,1,.3,1);width:calc(100% + 50vw);z-index:1}.work-meta p{font:11px/1.25 'DM Mono',monospace;margin:0;max-width:170px;text-transform:uppercase}.work-meta span{display:block;opacity:.6;padding-bottom:7px}.works-list li:hover .work-meta,.works-list li:focus-within .work-meta{opacity:1;transform:scaleY(1)}.works-list li:hover > button,.works-list li:focus-within > button{color:#fbfbfa}
-/* On project hover, the preview becomes a full-screen image backdrop. */
-.works-index:has(.works-list li:hover) .works-stage,.works-index:has(.works-list li:focus-within) .works-stage{bottom:0;left:0;position:fixed;right:0;top:0;width:100vw;z-index:20}
-.works-index:has(.works-list li:hover) .works-content,.works-index:has(.works-list li:focus-within) .works-content{color:#fbfbfa;z-index:21}
-.works-index:has(.works-list li:hover) .works-intro,.works-index:has(.works-list li:focus-within) .works-intro,.works-index:has(.works-list li:hover) .works-filter,.works-index:has(.works-list li:focus-within) .works-filter{opacity:0;pointer-events:none;transition:opacity .2s ease}
-.works-index:has(.works-list li:hover) .works-list li:not(:hover),.works-index:has(.works-list li:focus-within) .works-list li:not(:focus-within){opacity:0;pointer-events:none}
-.works-index:has(.works-list li:hover) .works-list li:hover,.works-index:has(.works-list li:focus-within) .works-list li:focus-within{width:100vw}
+.work{background:#fff;color:#111;min-height:100svh;padding:0;position:relative}
+.creative-space{background:#fff;min-height:100svh;padding:8px 22px 60px;position:relative;perspective:1200px;perspective-origin:center center}
+.creative-space-header{align-items:center;display:flex;justify-content:center;left:0;position:fixed;top:8px;width:100%;z-index:20}
+.creative-space-brand{color:#111;font-size:12px;font-weight:500;letter-spacing:-.08em;line-height:1;left:24px;position:absolute;top:8px}
+.creative-space-brand::after{content:'.';color:#e74a2d}
+.creative-space-nav{align-items:center;background:rgba(0,0,0,.03);backdrop-filter:blur(12px);border:1px solid rgba(17,17,17,.08);border-radius:6px;display:flex;gap:6px;justify-content:center;min-height:28px;padding:3px 8px}
+.creative-space-tab{background:transparent;border:0;color:#111;cursor:pointer;font:500 10px/1 'DM Mono',monospace;letter-spacing:.02em;padding:4px 8px;text-transform:none}
+.creative-space-tab span{display:inline-block;min-width:1.2em}
+.creative-space-tab.is-active{background:rgba(255,255,255,.72);border-radius:4px}
+.creative-space-close{background:none;border:0;color:#111;cursor:pointer;font:500 14px/1.1 'DM Sans',Arial,sans-serif;left:22px;position:absolute;top:140px;z-index:5}
+.creative-space-stage{padding-top:110px;position:relative;transform-style:preserve-3d}
+.creative-space-overlay{align-items:center;display:flex;justify-content:space-between;left:0;max-width:1180px;margin:0 auto 0;padding:0 6vw;position:relative}
+.creative-space-overlay span{color:#111;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.creative-space-name-block{max-width:1180px;margin:12px auto 0;padding:0 6vw}
+.creative-space-word{display:flex;flex-direction:column;gap:0;line-height:.82}
+.creative-space-word span{color:#111;display:block;font-family:'Arial Black','Arial',sans-serif;font-size:clamp(54px,7vw,140px);font-weight:900;letter-spacing:-.09em;line-height:.78;text-shadow:0 1px 0 rgba(17,17,17,.18),0 2px 0 rgba(17,17,17,.18),0 3px 0 rgba(17,17,17,.18),0 4px 0 rgba(17,17,17,.14),0 5px 0 rgba(17,17,17,.12),0 7px 0 rgba(17,17,17,.1),0 12px 18px rgba(17,17,17,.08);text-transform:none}
+.creative-space-word--primary{margin-top:28px}
+.creative-space-word--secondary{margin-top:4px}
+.creative-space-project-card{align-items:flex-end;display:flex;gap:18px;justify-content:space-between;margin:24px auto 0;max-width:1180px;padding:0 6vw;position:relative;--card-x:0px;--card-y:0px;--card-rotate-x:0deg;--card-rotate-y:0deg;transform:translate3d(var(--card-x),var(--card-y),0) rotateX(var(--card-rotate-x)) rotateY(var(--card-rotate-y));transform-style:preserve-3d;transition:transform .1s ease-out;will-change:transform}
+.creative-space-project-card img{background:#eee;display:block;filter:grayscale(1) contrast(1.12) brightness(.96);height:260px;object-fit:cover;max-width:760px;width:min(58vw,760px);box-shadow:0 20px 60px rgba(0,0,0,.15);transition:box-shadow .3s ease}
+.creative-space-project-copy{flex:1;max-width:280px}
+.creative-space-project-copy p{color:rgba(17,17,17,.72);font:500 11px 'DM Mono',monospace;letter-spacing:.14em;margin:0 0 8px;text-transform:uppercase}
+.creative-space-project-copy h2{color:#111;font-size:clamp(24px,2vw,42px);letter-spacing:-.07em;line-height:.9;margin:0}
+.creative-space:hover .creative-space-project-card img{box-shadow:0 40px 100px rgba(0,0,0,.25)}
+@media (max-width:700px){
+  .creative-space{padding:8px 16px 42px}
+  .creative-space-header{top:8px}
+  .creative-space-brand{left:18px}
+  .creative-space-close{left:18px;top:120px}
+  .creative-space-stage{padding-top:96px}
+  .creative-space-overlay,.creative-space-name-block,.creative-space-project-card{padding-left:0;padding-right:0}
+  .creative-space-project-card{flex-direction:column;align-items:flex-start;gap:14px}
+  .creative-space-project-card img{width:100%;max-width:none;height:220px}
+  .creative-space-word span{font-size:clamp(36px,12vw,82px)}
+  .creative-space-project-copy{max-width:none}
+}
 
 /* Statement / Contact (minimal) */
 .statement{background:var(--acid);padding:80px 5.5vw}
@@ -172,3 +189,30 @@ section{min-height:100vh}
 .works-index:has(.works-list li:hover) .works-intro,.works-index:has(.works-list li:focus-within) .works-intro,.works-index:has(.works-list li:hover) .works-filter,.works-index:has(.works-list li:focus-within) .works-filter{opacity:1;pointer-events:auto}
 .works-index:has(.works-list li:hover) .works-list li:not(:hover),.works-index:has(.works-list li:focus-within) .works-list li:not(:focus-within){opacity:1;pointer-events:auto}
 .works-index:has(.works-list li:hover) .works-list li:hover,.works-index:has(.works-list li:focus-within) .works-list li:focus-within{width:auto}
+
+/* Selected-work gallery: a single, immersive project at a time. */
+.work{background:#141716;color:#f6f4ee;overflow:hidden}
+.project-gallery{height:100svh;isolation:isolate;overflow:hidden;position:relative}
+.project-gallery-media,.project-gallery-shade{inset:0;position:absolute}
+.project-gallery-media{background:#1c211f;z-index:-2}
+.project-gallery-media img{height:100%;inset:0;object-fit:cover;opacity:0;position:absolute;transform:scale(1.08);transition:opacity .7s ease,transform 1.4s cubic-bezier(.16,1,.3,1);width:100%}
+.project-gallery-media img.is-active{opacity:1;transform:scale(1)}
+.project-gallery-shade{background:linear-gradient(180deg,rgba(12,15,14,.24),rgba(12,15,14,.08) 42%,rgba(12,15,14,.75));z-index:-1}
+.project-gallery-top{align-items:flex-start;display:flex;font:11px 'DM Mono',monospace;justify-content:space-between;left:0;letter-spacing:.02em;padding:28px;position:absolute;right:0;text-transform:uppercase;top:0}
+.project-gallery-top p{margin:0}
+.project-gallery-feature{bottom:clamp(164px,22vh,248px);color:#f6f4ee;display:block;left:clamp(24px,5vw,78px);max-width:min(830px,76vw);position:absolute}
+.project-gallery-feature p{font:11px 'DM Mono',monospace;letter-spacing:.04em;margin:0 0 18px;text-transform:uppercase}
+.project-gallery-feature h2{font-family:'DM Sans',Arial,sans-serif;font-size:clamp(58px,10vw,164px);font-weight:400;letter-spacing:-.095em;line-height:.76;margin:0;transition:opacity .25s ease}
+.project-gallery-feature span{display:inline-block;font:clamp(26px,3.5vw,52px)/1 'DM Sans',sans-serif;margin-top:24px;transition:transform .35s cubic-bezier(.16,1,.3,1)}
+.project-gallery-feature:hover span,.project-gallery-feature:focus-visible span{transform:translate(8px,-8px)}
+.project-gallery-feature:focus-visible{outline:1px solid #f6f4ee;outline-offset:10px}
+.project-gallery-bottom{align-items:flex-end;bottom:0;display:flex;justify-content:space-between;left:0;padding:28px;position:absolute;right:0}
+.project-gallery-controls{display:flex;gap:20px}
+.project-gallery-controls button,.project-gallery-list button{background:none;border:0;color:#f6f4ee;cursor:pointer;font:11px 'DM Mono',monospace;padding:0;text-align:left;text-transform:uppercase}
+.project-gallery-controls button{border-bottom:1px solid rgba(246,244,238,.55);padding-bottom:6px}
+.project-gallery-controls button:hover,.project-gallery-controls button:focus-visible{border-color:#f6f4ee}
+.project-gallery-list{display:flex;flex-direction:column;gap:6px;max-width:260px}
+.project-gallery-list button{color:rgba(246,244,238,.55);transition:color .2s ease,transform .25s cubic-bezier(.16,1,.3,1)}
+.project-gallery-list button.is-active,.project-gallery-list button:hover,.project-gallery-list button:focus-visible{color:#f6f4ee;transform:translateX(-8px)}
+.project-gallery-list button.is-active::before{content:'\u2022';margin-right:7px}
+@media (max-width:700px){.project-gallery-top,.project-gallery-bottom{padding:20px}.project-gallery-feature{bottom:174px;left:20px;max-width:calc(100vw - 40px)}.project-gallery-feature h2{font-size:clamp(54px,15vw,100px);line-height:.8}.project-gallery-list{display:none}.project-gallery-controls{gap:14px}}

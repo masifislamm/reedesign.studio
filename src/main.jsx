@@ -21,26 +21,72 @@ function Menu({ open, close }) {
 }
 
 function WorksIndex({ slides }) {
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [filter, setFilter] = useState('All Industries');
-  const [activeProject, setActiveProject] = useState(null);
-  const industries = ['All Industries', ...new Set(slides.map(project => project.industry))];
-  const visible = filter === 'All Industries' ? slides : slides.filter(project => project.industry === filter);
-  return <div className={`works-index ${activeProject ? 'has-active-project' : ''}`} role="region" aria-label="Selected work" onMouseLeave={() => setActiveProject(null)}>
-    <div className="works-stage" aria-hidden="true">{slides.map(project => <img className={activeProject === project.name ? 'is-active' : ''} key={project.name} src={project.image} alt="" />)}</div>
-    <div className="works-intro">
-      <h2>Projects<br />that deliver<br />on what we<br />say</h2>
-      <div className="works-copy">
-        <p>Every project here is the real application of our methodology \u2014 and of brands willing to go further. From initial research to the last aesthetic detail, every decision is made so the work performs inside and resonates outside, turning web design into memorable digital experiences.</p>
-        <p>This selection brings together projects for large and small companies, across different sectors and complexities \u2014 but with the same standard behind them. Each one, built to be unrepeatable.</p>
+  const [activeIndex, setActiveIndex] = useState(0);
+  const stageRef = useRef(null);
+  const imageRef = useRef(null);
+  const activeProject = slides[activeIndex];
+  const selectProject = index => setActiveIndex((index + slides.length) % slides.length);
+
+  const handleParallaxMove = event => {
+    if (event.pointerType === 'touch') return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
+    const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+    
+    // Apply parallax effect to image and card
+    if (imageRef.current) {
+      imageRef.current.style.setProperty('--card-x', `${x * 8}px`);
+      imageRef.current.style.setProperty('--card-y', `${y * 8}px`);
+      imageRef.current.style.setProperty('--card-rotate-x', `${y * 4}deg`);
+      imageRef.current.style.setProperty('--card-rotate-y', `${x * 4}deg`);
+    }
+  };
+
+  const handleParallaxLeave = event => {
+    if (imageRef.current) {
+      imageRef.current.style.setProperty('--card-x', '0px');
+      imageRef.current.style.setProperty('--card-y', '0px');
+      imageRef.current.style.setProperty('--card-rotate-x', '0deg');
+      imageRef.current.style.setProperty('--card-rotate-y', '0deg');
+    }
+  };
+
+  return <div className="creative-space" role="region" aria-label="Selected work" onPointerMove={handleParallaxMove} onPointerLeave={handleParallaxLeave}>
+    <header className="creative-space-header">
+      <div className="creative-space-brand">GN .D</div>
+      <nav className="creative-space-nav" aria-label="Project navigation">
+        <button type="button" className="creative-space-tab is-active" onClick={() => selectProject(activeIndex)}>
+          Creative Space <span>{activeIndex + 1}</span>
+        </button>
+        {slides.slice(1).map((project, index) => (
+          <button key={project.name} type="button" className="creative-space-tab" onClick={() => selectProject(index + 1)}>
+            {index + 2}
+          </button>
+        ))}
+      </nav>
+    </header>
+
+    <button type="button" className="creative-space-close">Close</button>
+
+    <div className="creative-space-stage" ref={stageRef}>
+      <div className="creative-space-overlay"><span>Overview</span><span>{String(activeIndex + 1).padStart(3, '0')}</span></div>
+      <div className="creative-space-name-block">
+        <div className="creative-space-word creative-space-word--primary">
+          <span>Gionatan</span>
+          <span>Nese</span>
+        </div>
+        <div className="creative-space-word creative-space-word--secondary">
+          <span>Multi-Disciplinary</span>
+          <span>Designer</span>
+        </div>
       </div>
-    </div>
-    <div className="works-content">
-      <div className={`works-filter ${filterOpen ? 'is-open' : ''}`}>
-        <button type="button" aria-expanded={filterOpen} onClick={() => setFilterOpen(!filterOpen)}>{filter}<span>\u2195</span></button>
-        <div>{industries.map(industry => <button type="button" key={industry} onClick={() => { setFilter(industry); setFilterOpen(false); }}>{industry}</button>)}</div>
+      <div className="creative-space-project-card" ref={imageRef}>
+        <img src={activeProject.image} alt={activeProject.name} />
+        <div className="creative-space-project-copy">
+          <p>{activeProject.industry}</p>
+          <h2>{activeProject.name}</h2>
+        </div>
       </div>
-      <ul className="works-list">{visible.map(project => <li key={project.name} onMouseEnter={() => setActiveProject(project.name)} onFocus={() => setActiveProject(project.name)}><a href="#contact">{project.name}</a></li>)}</ul>
     </div>
   </div>;
 }
@@ -120,16 +166,18 @@ function App() {
     frame = requestAnimationFrame(animate);
     return () => { window.removeEventListener('pointermove', move); cancelAnimationFrame(frame); };
   }, []);
-  return <main>
+  return <>
     <div ref={cursorRef} className="custom-cursor" aria-hidden="true" />
+    <main>
     <header className="nav"><a className="brand" href="#top" aria-label="ree.design studio home">ree<span>.</span>design<br />studio</a><button className="menu-button" onClick={() => setMenu(true)}>Menu <b>+</b></button></header>
     <Menu open={menu} close={() => setMenu(false)} />
     <section className="hero" id="top" onPointerMove={handleHeroMove} onPointerLeave={event => event.currentTarget.style.setProperty('--image-x', '0px')}><div className="hero-image"><video autoPlay muted loop playsInline preload="auto"><source src="/video/hero.mp4" type="video/mp4" /></video><span className="hero-shine" aria-hidden="true" /></div></section>
-    <section className="intro" id="about" aria-label="Who we are"><div className="intro-statement intro-statement-one"><div className="intro-word-group intro-left-top"><div>We</div><div>Don't</div><div>Design</div></div><div className="intro-word-group intro-left-bottom"><div>In</div><div>Isolation</div></div></div><div className="intro-statement intro-statement-two"><div className="intro-word-group intro-middle"><div>We</div><div>Question</div><div>Connect</div><div>Experiment</div></div></div><div className="intro-statement intro-statement-three"><div className="intro-word-group intro-right"><div>And</div><div>Build</div><div>Design</div><div>That</div><div>Matters</div></div></div><button className="text-link" type="button" onClick={() => setAboutOpen(true)}>Read more <span aria-hidden="true">\u2193</span></button></section>
+    <section className="intro" id="about" aria-label="Who we are"><div className="intro-statement intro-statement-one"><div className="intro-word-group intro-left-top"><div>We</div><div>Don't</div><div>Design</div></div><div className="intro-word-group intro-left-bottom"><div>In</div><div>Isolation</div></div></div><div className="intro-statement intro-statement-two"><div className="intro-word-group intro-middle"><div>We</div><div>Question</div><div>Connect</div><div>Experiment</div></div></div><div className="intro-statement intro-statement-three"><div className="intro-word-group intro-right"><div>And</div><div>Build</div><div>Design</div><div>That</div><div>Matters</div></div></div><button className="text-link" type="button" onClick={() => setAboutOpen(true)}>Read more</button></section>
     <section className={`about-panel ${aboutOpen ? 'is-open' : ''}`} aria-hidden={!aboutOpen}><button className="about-close" type="button" onClick={() => setAboutOpen(false)}>Close <span>\u00d7</span></button><div className="about-panel-content"><p className="about-kicker">Who we are</p><div className="about-copy"><p>We are a multidisciplinary design consultancy shaping ideas into spaces, products, brands, and experiences.</p><p>We connect architecture, interiors, product, graphics, and branding through one cohesive design approach.</p><p>Based in Dhaka. Working across Bangladesh.</p></div></div></section>
     <section className="work" id="projects"><WorksIndex slides={projects} /></section>
     <section className="statement"><p className="eyebrow">OUR APPROACH</p><h2>Thoughtful design<br />is a form of <em>care.</em></h2><p className="statement-copy">Our work starts with listening. We look carefully at the character of a place, the people around it and the possibilities hidden in plain sight. Then, together, we make something lasting.</p></section>
     <section className="contact" id="contact"><p className="eyebrow">START A CONVERSATION</p><h2>Have a space<br />in <em>mind?</em></h2><a href="mailto:hello@ree.design" className="email">hello@ree.design <span>\u2197</span></a><div className="contact-bottom"><p>Dhaka, Bangladesh<br />Working everywhere</p><p>\u00a9 2026 ree.design studio</p><a href="#top">Back to top \u2191</a></div></section>
-  </main>;
+    </main>
+  </>;
 }
 createRoot(document.getElementById('root')).render(<App />);
