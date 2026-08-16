@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 import ProjectList from './ProjectList';
+import AsciiWhoWeAre from './AsciiWhoWeAre';
+import TaglinePages from './TaglinePages';
+import ErrorBoundary, { ErrorScreen } from './ErrorBoundary';
 
 const projects = [
   { name: 'Terra Console', industry: 'Product Design', image: '/images/projects/project-01.jpg' },
@@ -50,6 +53,7 @@ function WorksIndex({ slides }) {
 function App() {
   const [menu, setMenu] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [approachOpen, setApproachOpen] = useState(false);
   const [showHeroVideo] = useState(() => {
     const connection = navigator.connection;
     return !connection?.saveData && !['slow-2g', '2g'].includes(connection?.effectiveType) && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -59,6 +63,9 @@ function App() {
   const menuCloseRef = useRef(null);
   const aboutButtonRef = useRef(null);
   const aboutCloseRef = useRef(null);
+  const approachButtonRef = useRef(null);
+  const approachCloseRef = useRef(null);
+  const previousApproach = useRef(false);
   const previousMenu = useRef(false);
   const previousAbout = useRef(false);
   const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -72,11 +79,40 @@ function App() {
     event.currentTarget.style.setProperty('--image-x', `${x * 12}px`);
     event.currentTarget.style.setProperty('--image-y', `${y * 10}px`);
   };
+  const handleContactRingMove = event => {
+    if (event.pointerType === 'touch' || prefersReducedMotion()) return;
+    const ring = event.currentTarget;
+    const bounds = ring.getBoundingClientRect();
+    const x = Math.max(-1, Math.min(1, ((event.clientX - bounds.left) / bounds.width - .5) * 2));
+    const y = Math.max(-1, Math.min(1, ((event.clientY - bounds.top) / bounds.height - .5) * 2));
+    ring.style.setProperty('--ring-scale-x', `${1 + Math.abs(x) * .045}`);
+    ring.style.setProperty('--ring-scale-y', `${1 + Math.abs(y) * .045}`);
+    ring.style.setProperty('--ring-skew-x', `${y * -3.5}deg`);
+    ring.style.setProperty('--ring-skew-y', `${x * 3.5}deg`);
+    ring.style.setProperty('--ring-radius', `${50 + y * 7}% ${50 - x * 9}% ${50 - y * 7}% ${50 + x * 9}% / ${50 - x * 7}% ${50 - y * 9}% ${50 + x * 7}% ${50 + y * 9}%`);
+    ring.style.setProperty('--hole-x', `${x * 9}px`);
+    ring.style.setProperty('--hole-y', `${y * 9}px`);
+    ring.style.setProperty('--hole-scale-x', `${1 - Math.abs(x) * .07}`);
+    ring.style.setProperty('--hole-scale-y', `${1 - Math.abs(y) * .07}`);
+  };
+  const resetContactRing = event => {
+    const ring = event.currentTarget;
+    ring.style.setProperty('--ring-scale-x', '1');
+    ring.style.setProperty('--ring-scale-y', '1');
+    ring.style.setProperty('--ring-skew-x', '0deg');
+    ring.style.setProperty('--ring-skew-y', '0deg');
+    ring.style.setProperty('--ring-radius', '50%');
+    ring.style.setProperty('--hole-x', '0px');
+    ring.style.setProperty('--hole-y', '0px');
+    ring.style.setProperty('--hole-scale-x', '1');
+    ring.style.setProperty('--hole-scale-y', '1');
+  };
   useEffect(() => {
     const onKey = event => {
       if (event.key !== 'Escape') return;
       setMenu(false);
       setAboutOpen(false);
+      setApproachOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -91,6 +127,11 @@ function App() {
     else if (previousAbout.current) aboutButtonRef.current?.focus();
     previousAbout.current = aboutOpen;
   }, [aboutOpen]);
+  useEffect(() => {
+    if (approachOpen) approachCloseRef.current?.focus();
+    else if (previousApproach.current) approachButtonRef.current?.focus();
+    previousApproach.current = approachOpen;
+  }, [approachOpen]);
   useEffect(() => {
     if (prefersReducedMotion()) return undefined;
     const cursor = cursorRef.current;
@@ -127,6 +168,7 @@ function App() {
     <Menu open={menu} close={() => setMenu(false)} closeRef={menuCloseRef} />
     <section className="hero" id="top" onPointerMove={handleHeroMove} onPointerLeave={event => { event.currentTarget.style.setProperty('--image-x', '0px'); event.currentTarget.style.setProperty('--image-y', '0px'); }}><div className="hero-image">{showHeroVideo && <video autoPlay muted loop playsInline preload="metadata"><source src="/video/hero.mp4" type="video/mp4" /></video>}<span className="hero-shine" aria-hidden="true" /></div></section>
     <section className="intro" id="about" aria-labelledby="about-heading">
+      <AsciiWhoWeAre />
       <div className="intro-grid intro-grid--top" aria-hidden="true" />
       <div className="intro-grid intro-grid--bottom" aria-hidden="true" />
       <div className="intro-brush" aria-hidden="true" />
@@ -140,9 +182,16 @@ function App() {
     </section>
     <section className={`about-panel ${aboutOpen ? 'is-open' : ''}`} aria-hidden={!aboutOpen} inert={!aboutOpen} role="dialog" aria-modal="true" aria-labelledby="about-title" onClick={() => setAboutOpen(false)} onKeyDown={trapFocus}><button className="about-close" ref={aboutCloseRef} type="button" onClick={() => setAboutOpen(false)}>Close <span>\u00d7</span></button><div className="about-panel-content"><p className="about-kicker" id="about-title">Who we are</p><div className="about-copy"><p>We are a multidisciplinary design consultancy shaping ideas into spaces, products, brands, and experiences.</p><p>We connect architecture, interiors, product, graphics, and branding through one cohesive design approach.</p><p>Based in Dhaka. Working across Bangladesh.</p></div><p className="about-dismiss" aria-hidden="true">Click anywhere to return</p></div></section>
     <section className="work" id="projects"><WorksIndex slides={projects} /></section>
-    <section className="statement"><p className="eyebrow">OUR APPROACH</p><h2>Thoughtful design<br />is a form of <em>care.</em></h2><p className="statement-copy">Our work starts with listening. We look carefully at the character of a place, the people around it and the possibilities hidden in plain sight. Then, together, we make something lasting.</p></section>
-    <section className="contact" id="contact"><p className="eyebrow">START A CONVERSATION</p><h2>Have a space<br />in <em>mind?</em></h2><a href="mailto:hello@ree.design" className="email">hello@ree.design <span>\u2197</span></a><div className="contact-bottom"><p>Dhaka, Bangladesh<br />Working everywhere</p><p>\u00a9 2026 ree.design studio</p><a href="#top">Back to top \u2191</a></div></section>
+    <section className="statement"><p className="eyebrow">03 — OUR APPROACH</p><figure className="statement-visual" aria-hidden="true"><img src="/images/projects/project-13.jpg" alt="" /></figure><h2>Thoughtful design<br />is a form of care.</h2><p className="statement-copy">Our work starts with listening. We look carefully at the character of a place, the people around it and the possibilities hidden in plain sight. Then, together, we make something lasting.</p><button className="approach-read-more" ref={approachButtonRef} type="button" onClick={() => setApproachOpen(true)}>Read more <span>↗</span></button></section>
+    {approachOpen && <section className="approach-panel" role="dialog" aria-modal="true" aria-label="Our approach" onKeyDown={trapFocus}><button className="approach-close" ref={approachCloseRef} type="button" onClick={() => setApproachOpen(false)}>Close <span>×</span></button><TaglinePages onExit={() => setApproachOpen(false)} /></section>}
+    <section className="contact" id="contact" aria-labelledby="contact-title"><p className="contact-label">04 — CONTACT US</p><p className="contact-side contact-side--left">REE.DESIGN STUDIO</p><div className="contact-ring" aria-hidden="true" onPointerMove={handleContactRingMove} onPointerLeave={resetContactRing} /><a href="mailto:hello@ree.design" className="contact-cta" id="contact-title">Let’s Talk!</a><p className="contact-side contact-side--right">DHAKA · BANGLADESH</p><div className="contact-bottom"><p>Architecture · Interiors<br />Design strategy</p><p>\u00a9 2026 ree.design studio</p><a href="#top">Back to top \u2191</a></div></section>
     </main>
   </>;
 }
-createRoot(document.getElementById('root')).render(<App />);
+const showErrorPreview = new URLSearchParams(window.location.search).has('error-preview');
+
+createRoot(document.getElementById('root')).render(
+  <ErrorBoundary>
+    {showErrorPreview ? <ErrorScreen onRetry={() => { window.location.href = window.location.pathname; }} /> : <App />}
+  </ErrorBoundary>,
+);
